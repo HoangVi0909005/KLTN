@@ -1,5 +1,6 @@
 package com.furniture.furniture_backend.config;
 
+import org.springframework.http.HttpMethod;
 import com.furniture.furniture_backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         // Public endpoints - KHÔNG CẦN AUTHENTICATION
                         .requestMatchers(
                                 "/api/users/login",
@@ -47,6 +50,7 @@ public class SecurityConfig {
                                 "/api/products/**",
                                 "/api/categories/**",
                                 "/api/chatbot/**",
+                                "/api/chat/**",
                                 "/api/payment/**")
                         .permitAll()
 
@@ -66,9 +70,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "https://kltn-production-eb9b.up.railway.app"));
+
+        configuration.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
