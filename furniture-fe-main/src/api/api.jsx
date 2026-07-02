@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Base URL của backend API
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://kltn-production-d87a.up.railway.app/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

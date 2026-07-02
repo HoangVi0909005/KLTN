@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/chatbot';
+const API_URL = 'https://kltn-production-d87a.up.railway.app/api/chat';
 
 class ChatService {
   /**
