@@ -1,10 +1,10 @@
 package com.furniture.furniture_backend.config;
 
-import org.springframework.http.HttpMethod;
 import com.furniture.furniture_backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -36,28 +36,34 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+
+                        // Cho phép preflight CORS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Public endpoints - KHÔNG CẦN AUTHENTICATION
+                        // Public endpoints - không cần đăng nhập
                         .requestMatchers(
+                                "/",
                                 "/api/users/login",
                                 "/api/users/register",
                                 "/api/users/forgot-password",
                                 "/api/users/reset-password",
+
                                 "/api/products/**",
                                 "/api/categories/**",
-                                "/api/chatbot/**",
+
                                 "/api/chat/**",
+                                "/api/chatbot/**",
+
                                 "/api/payment/**")
                         .permitAll()
 
                         // Admin endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // Các endpoints khác cần authentication
+                        // Các endpoint khác cần đăng nhập
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -92,6 +98,7 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 
