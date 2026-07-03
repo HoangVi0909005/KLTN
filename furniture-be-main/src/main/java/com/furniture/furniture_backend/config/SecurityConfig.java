@@ -4,7 +4,6 @@ import com.furniture.furniture_backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -36,34 +35,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-
-                        // Cho phép preflight CORS
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // Public endpoints - không cần đăng nhập
+                        // Public endpoints - KHÔNG CẦN AUTHENTICATION
                         .requestMatchers(
-                                "/",
                                 "/api/users/login",
                                 "/api/users/register",
                                 "/api/users/forgot-password",
                                 "/api/users/reset-password",
-
                                 "/api/products/**",
                                 "/api/categories/**",
-
-                                "/api/chat/**",
                                 "/api/chatbot/**",
-
                                 "/api/payment/**")
                         .permitAll()
 
                         // Admin endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // Các endpoint khác cần đăng nhập
+                        // Các endpoints khác cần authentication
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -72,32 +62,17 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "https://kltn-production-eb9b.up.railway.app"));
-
-        configuration.setAllowedMethods(Arrays.asList(
-                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-
-        configuration.setAllowedHeaders(Arrays.asList(
-                "Authorization",
-                "Content-Type",
-                "Accept",
-                "Origin",
-                "X-Requested-With"));
-
-        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 
