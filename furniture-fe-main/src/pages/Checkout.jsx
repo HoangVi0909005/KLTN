@@ -136,10 +136,11 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      error("❌ Vui lòng điền đầy đủ thông tin!");
-      return;
-    }
+    // Bỏ comment đoạn này nếu muốn chặn lỗi trống thông tin ở Frontend
+    // if (!validateForm()) {
+    //   error("❌ Vui lòng điền đầy đủ thông tin!");
+    //   return;
+    // }
 
     if (!currentUserId) {
       error("⚠️ Phiên đăng nhập hết hạn, vui lòng đăng nhập lại.");

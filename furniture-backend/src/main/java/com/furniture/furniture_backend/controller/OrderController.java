@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Map;
@@ -83,7 +82,7 @@ public class OrderController {
     @PostMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(
             @PathVariable Long userId,
-            @Valid @RequestBody OrderRequest request) {
+            @RequestBody OrderRequest request) {
         OrderResponse order = orderService.createOrder(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
             ApiResponse.success("Order created successfully", order)
